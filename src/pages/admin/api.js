@@ -2,55 +2,53 @@ import Vue from 'vue'
 import router from './router'
 import axios from 'axios'
 import utils from '@/utils/utils'
+import storage from '@/utils/storage'
 
 Vue.prototype.$http = axios
 axios.defaults.baseURL = '/api'
-axios.defaults.xsrfHeaderName = 'X-CSRFToken'
-axios.defaults.xsrfCookieName = 'csrftoken'
+// axios.defaults.xsrfHeaderName = 'X-CSRFToken'
+// axios.defaults.xsrfCookieName = 'csrftoken'
 
 export default {
   // 登录
   login (username, password) {
-    return ajax('login', 'post', {
+    return ajax('/user/login', 'post', {
       data: {
         username,
         password
       }
     })
   },
+  // 退出
   logout () {
-    return ajax('logout', 'get')
+    return ajax('/user/logout', 'post')
   },
+  // 获取个人信息
   getProfile () {
-    return ajax('profile', 'get')
+    return ajax('/userInfo/profile', 'get')
   },
   // 获取公告列表
-  getAnnouncementList (offset, limit) {
-    return ajax('admin/announcement', 'get', {
+  getAnnouncementList (pageNum, limit) {
+    return ajax('/content/announcement/admin', 'get', {
       params: {
-        paging: true,
-        offset,
+        pageNum,
         limit
       }
     })
   },
   // 删除公告
   deleteAnnouncement (id) {
-    return ajax('admin/announcement', 'delete', {
-      params: {
-        id
-      }
-    })
+    return ajax('/content/announcement/admin/' + id, 'delete')
   },
   // 修改公告
   updateAnnouncement (data) {
-    return ajax('admin/announcement', 'put', {
+    return ajax('/content/announcement/admin', 'put', {
       data
     })
   },
   // 添加公告
   createAnnouncement (data) {
-    return ajax('admin/announcement', 'post', {
+    return ajax('/content/announcement/admin', 'post', {
       data
     })
   },
@@ -100,31 +98,13 @@ export default {
   getLanguages () {
     return ajax('languages', 'get')
   },
-  getSMTPConfig () {
-    return ajax('admin/smtp', 'get')
-  },
-  createSMTPConfig (data) {
-    return ajax('admin/smtp', 'post', {
-      data
-    })
-  },
-  editSMTPConfig (data) {
-    return ajax('admin/smtp', 'put', {
-      data
-    })
-  },
-  testSMTPConfig (email) {
-    return ajax('admin/smtp_test', 'post', {
-      data: {
-        email
-      }
-    })
-  },
+  // 获取网站基本信息
   getWebsiteConfig () {
-    return ajax('admin/website', 'get')
+    return ajax('/content/website', 'get')
   },
+  // 修改网站基本信息
   editWebsiteConfig (data) {
-    return ajax('admin/website', 'post', {
+    return ajax('/content/website', 'put', {
       data
     })
   },
@@ -179,18 +159,16 @@ export default {
       params: params
     })
   },
+  // 获取竞赛公告
   getContestAnnouncementList (contestID) {
-    return ajax('admin/contest/announcement', 'get', {
-      params: {
-        contest_id: contestID
-      }
-    })
+    return ajax('/content/competition/' + contestID + '/announcement/admin', 'get')
   },
   createContestAnnouncement (data) {
     return ajax('admin/contest/announcement', 'post', {
       data
     })
   },
+  // 删除竞赛公告
   deleteContestAnnouncement (id) {
     return ajax('admin/contest/announcement', 'delete', {
       params: {
@@ -312,6 +290,10 @@ function ajax (url, method, options) {
   } else {
     params = data = {}
   }
+  let token = storage.get('token')
+  if (token !== null && token !== undefined) {
+    axios.defaults.headers.common['Authorization'] = 'Bearer ' + token
+  }
   return new Promise((resolve, reject) => {
     axios({
       url,
@@ -319,11 +301,10 @@ function ajax (url, method, options) {
       params,
       data
     }).then(res => {
-      // API正常返回(status=20x), 是否错误通过有无error判断
-      if (res.data.error !== null) {
-        Vue.prototype.$error(res.data.data)
+      if (res.data.code !== 20000) {
+        Vue.prototype.$error(res.data.message)
         reject(res)
-        // // 若后端返回为登录，则为session失效，应退出当前登录用户
+        // 若后端返回为登录，则为session失效，应退出当前登录用户
         if (res.data.data.startsWith('Please login')) {
           router.push({name: 'login'})
         }

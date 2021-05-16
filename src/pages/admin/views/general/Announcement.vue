@@ -8,33 +8,39 @@
           ref="table"
           :data="announcementList"
           style="width: 100%">
+<!--            显示id-->
           <el-table-column
             width="100"
-            prop="id"
+            prop="announcementId"
             label="ID">
           </el-table-column>
+<!--            显示标题-->
           <el-table-column
-            prop="title"
+            prop="announcementName"
             label="Title">
           </el-table-column>
+<!--            显示创建时间-->
           <el-table-column
-            prop="create_time"
+            prop="createTime"
             label="CreateTime">
             <template slot-scope="scope">
-              {{ scope.row.create_time | localtime }}
+              {{ scope.row.createTime | localtime }}
             </template>
           </el-table-column>
+<!--            显示最后更新时间-->
           <el-table-column
-            prop="last_update_time"
+            prop="lastUpdateTime"
             label="LastUpdateTime">
             <template slot-scope="scope">
-              {{scope.row.last_update_time | localtime }}
+              {{scope.row.lastUpdateTime | localtime }}
             </template>
           </el-table-column>
+<!--            显示作者-->
           <el-table-column
-            prop="created_by.username"
+            prop="nickname"
             label="Author">
           </el-table-column>
+<!--            显示可见性-->
           <el-table-column
             width="100"
             prop="visible"
@@ -47,18 +53,23 @@
               </el-switch>
             </template>
           </el-table-column>
+<!--            显示操作-->
           <el-table-column
             fixed="right"
             label="Option"
             width="200">
             <div slot-scope="scope">
-              <icon-btn name="Edit" icon="edit" @click.native="openAnnouncementDialog(scope.row.id)"></icon-btn>
-              <icon-btn name="Delete" icon="trash" @click.native="deleteAnnouncement(scope.row.id)"></icon-btn>
+<!--              修改公告-->
+              <icon-btn name="Edit" icon="edit" @click.native="openAnnouncementDialog(scope.row.announcementId)"></icon-btn>
+<!--              删除公告-->
+              <icon-btn name="Delete" icon="trash" @click.native="deleteAnnouncement(scope.row.announcementId)"></icon-btn>
             </div>
           </el-table-column>
         </el-table>
         <div class="panel-options">
+<!--          创建公告-->
           <el-button type="primary" size="small" @click="openAnnouncementDialog(null)" icon="el-icon-plus">Create</el-button>
+<!--          分页-->
           <el-pagination
             v-if="!contestID"
             class="page"
@@ -76,12 +87,12 @@
       <el-form label-position="top">
         <el-form-item :label="$t('m.Announcement_Title')" required>
           <el-input
-            v-model="announcement.title"
+            v-model="announcement.announcementName"
             :placeholder="$t('m.Announcement_Title')" class="title-input">
           </el-input>
         </el-form-item>
         <el-form-item :label="$t('m.Announcement_Content')" required>
-          <Simditor v-model="announcement.content"></Simditor>
+          <Simditor v-model="announcement.announcementContent"></Simditor>
         </el-form-item>
         <div class="visible-box">
           <span>{{$t('m.Announcement_visible')}}</span>
@@ -125,9 +136,9 @@
         mode: 'create',
         // 公告 (new | edit) model
         announcement: {
-          title: '',
+          announcementName: '',
           visible: true,
-          content: ''
+          announcementContent: ''
         },
         // 对话框标题
         announcementDialogTitle: 'Edit Announcement',
@@ -141,22 +152,27 @@
       this.init()
     },
     methods: {
+        // 初始化函数
       init () {
         this.contestID = this.$route.params.contestId
+          // 如果处于竞赛中，则获取竞赛公告
         if (this.contestID) {
           this.getContestAnnouncementList()
         } else {
+            // 获取公共公告
           this.getAnnouncementList(1)
         }
       },
       // 切换页码回调
       currentChange (page) {
         this.currentPage = page
+          // 获取公共公告
         this.getAnnouncementList(page)
       },
+        // 获取公共公告
       getAnnouncementList (page) {
         this.loading = true
-        api.getAnnouncementList((page - 1) * this.pageSize, this.pageSize).then(res => {
+        api.getAnnouncementList(page, this.pageSize).then(res => {
           this.loading = false
           this.total = res.data.data.total
           this.announcementList = res.data.data.results
@@ -164,6 +180,7 @@
           this.loading = false
         })
       },
+        // 获取竞赛公告
       getContestAnnouncementList () {
         this.loading = true
         api.getContestAnnouncementList(this.contestID).then(res => {
@@ -191,18 +208,21 @@
       // 默认传入MouseEvent
       submitAnnouncement (data = undefined) {
         let funcName = ''
-        if (!data.title) {
+          // 如果没有标题的话
+        if (!data.announcementName) {
           data = {
-            id: this.currentAnnouncementId,
-            title: this.announcement.title,
-            content: this.announcement.content,
+            announcementId: this.currentAnnouncementId,
+            announcementName: this.announcement.announcementName,
+            announcementContent: this.announcement.announcementContent,
             visible: this.announcement.visible
           }
         }
         if (this.contestID) {
-          data.contest_id = this.contestID
+            // 如果处于竞赛中
+          data.competitionId = this.contestID
           funcName = this.mode === 'edit' ? 'updateContestAnnouncement' : 'createContestAnnouncement'
         } else {
+            // 如果不处于竞赛中
           funcName = this.mode === 'edit' ? 'updateAnnouncement' : 'createAnnouncement'
         }
         api[funcName](data).then(res => {
@@ -229,33 +249,37 @@
           this.loading = false
         })
       },
+        // 打开公告对话框
       openAnnouncementDialog (id) {
         this.showEditAnnouncementDialog = true
+          // 如果id不是空的话则说明是更改公告
         if (id !== null) {
           this.currentAnnouncementId = id
           this.announcementDialogTitle = 'Edit Announcement'
           this.announcementList.find(item => {
-            if (item.id === this.currentAnnouncementId) {
-              this.announcement.title = item.title
+            if (item.announcementId === this.currentAnnouncementId) {
+              this.announcement.announcementName = item.announcementName
               this.announcement.visible = item.visible
-              this.announcement.content = item.content
+              this.announcement.announcementContent = item.announcementContent
               this.mode = 'edit'
             }
           })
         } else {
+            // 创建新公告
           this.announcementDialogTitle = 'Create Announcement'
-          this.announcement.title = ''
+          this.announcement.announcementName = ''
           this.announcement.visible = true
-          this.announcement.content = ''
+          this.announcement.announcementContent = ''
           this.mode = 'create'
         }
       },
+        // 改变可见性
       handleVisibleSwitch (row) {
         this.mode = 'edit'
         this.submitAnnouncement({
-          id: row.id,
-          title: row.title,
-          content: row.content,
+          announcementId: row.announcementId,
+          announcementName: row.announcementName,
+          announcementContent: row.announcementContent,
           visible: row.visible
         })
       }

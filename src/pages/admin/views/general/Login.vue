@@ -2,8 +2,8 @@
   <el-form :model="ruleForm2" :rules="rules2" ref="ruleForm2" label-position="left" label-width="0px"
            class="demo-ruleForm login-container">
     <h3 class="title">{{$t('m.Welcome_to_Login')}}</h3>
-    <el-form-item prop="account">
-      <el-input type="text" v-model="ruleForm2.account" auto-complete="off" :placeholder="$t('m.username')" @keyup.enter.native="handleLogin"></el-input>
+    <el-form-item prop="username">
+      <el-input type="text" v-model="ruleForm2.username" auto-complete="off" :placeholder="$t('m.username')" @keyup.enter.native="handleLogin"></el-input>
     </el-form-item>
     <el-form-item prop="password">
       <el-input type="password" v-model="ruleForm2.password" auto-complete="off" :placeholder="$t('m.password')" @keyup.enter.native="handleLogin"></el-input>
@@ -17,17 +17,18 @@
 
 <script>
   import api from '../../api'
+  import {mapActions} from 'vuex'
 
-  export default {
+export default {
     data () {
       return {
         logining: false,
         ruleForm2: {
-          account: '',
+          username: '',
           password: ''
         },
         rules2: {
-          account: [
+          username: [
             {required: true, trigger: 'blur'}
           ],
           password: [
@@ -38,12 +39,15 @@
       }
     },
     methods: {
+      ...mapActions(['setToken']),
       handleLogin (ev) {
         this.$refs.ruleForm2.validate((valid) => {
           if (valid) {
             this.logining = true
-            api.login(this.ruleForm2.account, this.ruleForm2.password).then(data => {
+            api.login(this.ruleForm2.username, this.ruleForm2.password).then(res => {
               this.logining = false
+              // 设置token
+              this.setToken(res.data.data)
               this.$router.push({name: 'dashboard'})
             }, () => {
               this.logining = false

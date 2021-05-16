@@ -1,18 +1,26 @@
 <template>
   <div class="container">
+<!--    显示左侧菜单-->
     <div>
       <SideMenu></SideMenu>
     </div>
+<!--    上侧信息-->
     <div id="header">
+<!--      公式编辑器-->
       <i class="el-icon-fa-font katex-editor" @click="katexVisible=true" ></i>
+<!--      全屏-->
       <screen-full :width="14" :height="14" class="screen-full"></screen-full>
+<!--      管理员控制台-->
       <el-dropdown @command="handleCommand">
-        <span>{{user.username}}<i class="el-icon-caret-bottom el-icon--right"></i></span>
+<!--        用户名-->
+        <span>{{user.userName}}<i class="el-icon-caret-bottom el-icon--right"></i></span>
         <el-dropdown-menu slot="dropdown">
+<!--          注销-->
           <el-dropdown-item command="logout">Logout</el-dropdown-item>
         </el-dropdown-menu>
       </el-dropdown>
     </div>
+<!--    内容信息-->
     <div class="content-app">
       <transition name="fadeInUp" mode="out-in">
         <router-view></router-view>
@@ -21,7 +29,7 @@
         Build Version: {{ version }}
       </div>
     </div>
-
+<!--    弹出框-->
     <el-dialog :title="$t('m.Latex_Editor')" :visible.sync="katexVisible">
       <KatexEditor></KatexEditor>
     </el-dialog>
@@ -49,7 +57,9 @@
       KatexEditor,
       ScreenFull
     },
+    // 在路由进去之前
     beforeRouteEnter (to, from, next) {
+    // 首先获取个人信息
       api.getProfile().then(res => {
         if (!res.data.data) {
           // not login
@@ -62,10 +72,15 @@
       })
     },
     methods: {
+    // 处理命令的函数
       handleCommand (command) {
         if (command === 'logout') {
-          api.logout().then(() => {
-            this.$router.push({name: 'login'})
+          api.logout().then(res => {
+            this.$store.dispatch('clearProfile').then(res => {
+              this.$store.dispatch('clearToken').then(res => {
+                this.$router.push({name: 'login'})
+              })
+            })
           })
         }
       }

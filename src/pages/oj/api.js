@@ -18,7 +18,7 @@ export default {
   getWebsiteConf (params) {
     return ajax('/content/website', 'get', {
       params
-    }, false)
+    })
   },
   // 获取公共公告分页列表
   getAnnouncementList (pageNum, limit) {

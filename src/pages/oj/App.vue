@@ -9,7 +9,7 @@
         <p v-html="website.websiteFooter"></p>
 <!--        <p>Powered by <a href="https://github.com/QingdaoU/OnlineJudge">OnlineJudge</a>-->
         <p>
-          Powered by {{website.webseiteAuthor}}
+          Powered by {{website.websiteAuthor}}
           <span v-if="version">&nbsp; Version: {{ version }}</span>
         </p>
       </div>

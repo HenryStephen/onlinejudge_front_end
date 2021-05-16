@@ -320,7 +320,7 @@
           problem.languages = problem.languages.sort()
           this.problem = problem
           // 设置题目的统计信息
-          // this.changePie(problem)
+          this.changePie(problem)
           // 加载code模板
           if (this.code !== '') {
             return
@@ -334,16 +334,19 @@
       // 设置题目统计信息
       changePie (problemData) {
         // 只显示特定的一些状态
+        // 猜测statistic_info是map对象
         for (let k in problemData.statistic_info) {
           if (filtedStatus.indexOf(k) === -1) {
             delete problemData.statistic_info[k]
           }
         }
-        let acNum = problemData.accepted_number
+        // 设置 acnumber
+        let acNum = problemData.problemSolvedNumber
         let data = [
-          {name: 'WA', value: problemData.submission_number - acNum},
+          {name: 'WA', value: problemData.problemSubmitNumber - acNum},
           {name: 'AC', value: acNum}
         ]
+        // 设置饼状图的数据信息
         this.pie.series[0].data = data
         // 只把大图的AC selected下，这里需要做一下deepcopy
         let data2 = JSON.parse(JSON.stringify(data))
@@ -437,7 +440,7 @@
         const submitFunc = (data, detailsVisible) => {
           this.statusVisible = true
           api.submitCode(data).then(res => {
-            this.submissionId = res.data.data.toString()
+            this.submissionId = res.data.data
             // 定时检查状态
             this.submitting = false
             this.submissionExists = true
@@ -516,7 +519,6 @@
     beforeRouteLeave (to, from, next) {
       // 防止切换组件后仍然不断请求
       clearInterval(this.refreshStatus)
-
       this.$store.commit(types.CHANGE_CONTEST_ITEM_VISIBLE, {menu: true})
       storage.set(buildProblemCodeKey(this.problem.problemId, from.params.contestID), {
         code: this.code,
