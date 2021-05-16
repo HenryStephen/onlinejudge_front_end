@@ -133,29 +133,30 @@ export default {
       }
     })
   },
+  // 创建竞赛
   createContest (data) {
-    return ajax('admin/contest', 'post', {
+    return ajax('/contest/competition', 'post', {
       data
     })
   },
+  // 获取具体竞赛
   getContest (id) {
-    return ajax('admin/contest', 'get', {
-      params: {
-        id
-      }
-    })
+    return ajax('/contest/competition/' + id, 'get')
   },
+  // 修改竞赛
   editContest (data) {
-    return ajax('admin/contest', 'put', {
+    return ajax('/contest/competition', 'put', {
       data
     })
   },
+  // 获取竞赛列表
   getContestList (offset, limit, keyword) {
-    let params = {paging: true, offset, limit}
+    let params = {offset, limit}
     if (keyword) {
       params.keyword = keyword
     }
-    return ajax('admin/contest', 'get', {
+    params.isAdmin = true
+    return ajax('/contest/competition', 'get', {
       params: params
     })
   },
@@ -215,12 +216,14 @@ export default {
       }
     })
   },
+  // 获取题目列表
   getProblemList (params) {
     params = utils.filterEmptyValue(params)
-    return ajax('admin/problem', 'get', {
+    return ajax('/content/problem', 'get', {
       params
     })
   },
+  // 获取竞赛题目列表
   getContestProblemList (params) {
     params = utils.filterEmptyValue(params)
     return ajax('admin/contest/problem', 'get', {

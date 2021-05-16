@@ -2,12 +2,14 @@
   <div class="view">
     <Panel title="Contest List">
       <div slot="header">
+<!--        关键字查询-->
         <el-input
           v-model="keyword"
           prefix-icon="el-icon-search"
           placeholder="Keywords">
         </el-input>
       </div>
+
       <el-table
         v-loading="loading"
         element-loading-text="loading"
@@ -16,34 +18,34 @@
         style="width: 100%">
         <el-table-column type="expand">
           <template slot-scope="props">
-            <p>Start Time: {{props.row.start_time | localtime }}</p>
-            <p>End Time: {{props.row.end_time | localtime }}</p>
-            <p>Create Time: {{props.row.create_time | localtime}}</p>
-            <p>Creator: {{props.row.created_by.username}}</p>
+            <p>Start Time: {{props.row.competitionStartTime | localtime }}</p>
+            <p>End Time: {{props.row.competitionEndTime | localtime }}</p>
+            <p>Create Time: {{props.row.competitionCreateTime | localtime}}</p>
+            <p>Creator: {{props.row.createUserName}}</p>
           </template>
         </el-table-column>
         <el-table-column
-          prop="id"
+          prop="competitionId"
           width="80"
           label="ID">
         </el-table-column>
         <el-table-column
-          prop="title"
+          prop="competitionTitle"
           label="Title">
         </el-table-column>
         <el-table-column
           label="Rule Type"
           width="130">
           <template slot-scope="scope">
-            <el-tag type="gray">{{scope.row.rule_type}}</el-tag>
+            <el-tag type="gray">{{scope.row.competitionRuleType}}</el-tag>
           </template>
         </el-table-column>
         <el-table-column
           label="Contest Type"
           width="180">
           <template slot-scope="scope">
-            <el-tag :type="scope.row.contest_type === 'Public' ? 'success' : 'primary'">
-              {{ scope.row.contest_type}}
+            <el-tag :type="scope.row.competitionType === 'Public' ? 'success' : 'primary'">
+              {{ scope.row.competitionType}}
             </el-tag>
           </template>
         </el-table-column>
@@ -52,8 +54,8 @@
           width="130">
           <template slot-scope="scope">
             <el-tag
-              :type="scope.row.status === '-1' ? 'danger' : scope.row.status === '0' ? 'success' : 'primary'">
-              {{ scope.row.status | contestStatus}}
+              :type="scope.row.competitionStatus === '-1' ? 'danger' : scope.row.competitionStatus === '0' ? 'success' : 'primary'">
+              {{ scope.row.competitionStatus | contestStatus}}
             </el-tag>
           </template>
         </el-table-column>
@@ -73,12 +75,13 @@
           width="250"
           label="Operation">
           <div slot-scope="scope">
-            <icon-btn name="Edit" icon="edit" @click.native="goEdit(scope.row.id)"></icon-btn>
-            <icon-btn name="Problem" icon="list-ol" @click.native="goContestProblemList(scope.row.id)"></icon-btn>
+            <icon-btn name="Edit" icon="edit" @click.native="goEdit(scope.row.competitionId)"></icon-btn>
+            <icon-btn name="Problem" icon="list-ol" @click.native="goContestProblemList(scope.row.competitionId)"></icon-btn>
             <icon-btn name="Announcement" icon="info-circle"
-                      @click.native="goContestAnnouncement(scope.row.id)"></icon-btn>
+                      @click.native="goContestAnnouncement(scope.row.competitionId)"></icon-btn>
+<!--            下载AC的提交记录-->
             <icon-btn icon="download" name="Download Accepted Submissions"
-                      @click.native="openDownloadOptions(scope.row.id)"></icon-btn>
+                      @click.native="openDownloadOptions(scope.row.competitionId)"></icon-btn>
           </div>
         </el-table-column>
       </el-table>
@@ -92,6 +95,7 @@
         </el-pagination>
       </div>
     </Panel>
+<!--    下载AC的提交记录的提示信息-->
     <el-dialog title="Download Contest Submissions"
                width="30%"
                :visible.sync="downloadDialogVisible">
@@ -124,9 +128,11 @@
       }
     },
     mounted () {
+      // 获取竞赛列表
       this.getContestList(this.currentPage)
     },
     filters: {
+      // 过滤竞赛状态
       contestStatus (value) {
         return CONTEST_STATUS_REVERSE[value].name
       }
@@ -137,6 +143,7 @@
         this.currentPage = page
         this.getContestList(page)
       },
+      // 获取竞赛列表
       getContestList (page) {
         this.loading = true
         api.getContestList((page - 1) * this.pageSize, this.pageSize, this.keyword).then(res => {
@@ -147,24 +154,30 @@
           this.loading = false
         })
       },
+      // 打开下载选项
       openDownloadOptions (contestId) {
         this.downloadDialogVisible = true
         this.currentId = contestId
       },
+      // 下载提交记录
       downloadSubmissions () {
         let excludeAdmin = this.excludeAdmin ? '1' : '0'
         let url = `/admin/download_submissions?contest_id=${this.currentId}&exclude_admin=${excludeAdmin}`
         utils.downloadFile(url)
       },
+      // 修改竞赛信息
       goEdit (contestId) {
         this.$router.push({name: 'edit-contest', params: {contestId}})
       },
+      // 查看竞赛公告
       goContestAnnouncement (contestId) {
         this.$router.push({name: 'contest-announcement', params: {contestId}})
       },
+      // 查看竞赛题目列表
       goContestProblemList (contestId) {
         this.$router.push({name: 'contest-problem-list', params: {contestId}})
       },
+      // 更改竞赛是否可见
       handleVisibleSwitch (row) {
         api.editContest(row)
       }

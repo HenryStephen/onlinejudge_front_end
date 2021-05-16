@@ -2,6 +2,7 @@
   <div class="view">
     <Panel :title="contestId ? this.$i18n.t('m.Contest_Problem_List') : this.$i18n.t('m.Problem_List')">
       <div slot="header">
+<!--        关键字-->
         <el-input
           v-model="keyword"
           prefix-icon="el-icon-search"
@@ -15,42 +16,44 @@
         :data="problemList"
         @row-dblclick="handleDblclick"
         style="width: 100%">
+<!--        题目id-->
         <el-table-column
           width="100"
-          prop="id"
+          prop="problemId"
           label="ID">
         </el-table-column>
+<!--        展示id-->
         <el-table-column
           width="150"
           label="Display ID">
           <template slot-scope="{row}">
-            <span v-show="!row.isEditing">{{row._id}}</span>
-            <el-input v-show="row.isEditing" v-model="row._id"
+            <span v-show="!row.isEditing">{{row.problemDisplayId}}</span>
+            <el-input v-show="row.isEditing" v-model="row.problemDisplayId"
                       @keyup.enter.native="handleInlineEdit(row)">
-
             </el-input>
           </template>
         </el-table-column>
+<!--        题目标题-->
         <el-table-column
-          prop="title"
+          prop="problemTitle"
           label="Title">
           <template slot-scope="{row}">
-            <span v-show="!row.isEditing">{{row.title}}</span>
-            <el-input v-show="row.isEditing" v-model="row.title"
+            <span v-show="!row.isEditing">{{row.problemTitle}}</span>
+            <el-input v-show="row.isEditing" v-model="row.problemTitle"
                       @keyup.enter.native="handleInlineEdit(row)">
             </el-input>
           </template>
         </el-table-column>
         <el-table-column
-          prop="created_by.username"
+          prop="problemAuthor"
           label="Author">
         </el-table-column>
         <el-table-column
           width="200"
-          prop="create_time"
+          prop="problemCreateTime"
           label="Create Time">
           <template slot-scope="scope">
-            {{scope.row.create_time | localtime }}
+            {{scope.row.problemCreateTime | localtime }}
           </template>
         </el-table-column>
         <el-table-column
@@ -70,13 +73,13 @@
           label="Operation"
           width="250">
           <div slot-scope="scope">
-            <icon-btn name="Edit" icon="edit" @click.native="goEdit(scope.row.id)"></icon-btn>
+            <icon-btn name="Edit" icon="edit" @click.native="goEdit(scope.row.problemId)"></icon-btn>
             <icon-btn v-if="contestId" name="Make Public" icon="clone"
-                      @click.native="makeContestProblemPublic(scope.row.id)"></icon-btn>
+                      @click.native="makeContestProblemPublic(scope.row.problemId)"></icon-btn>
             <icon-btn icon="download" name="Download TestCase"
-                      @click.native="downloadTestCase(scope.row.id)"></icon-btn>
+                      @click.native="downloadTestCase(scope.row.problemId)"></icon-btn>
             <icon-btn icon="trash" name="Delete Problem"
-                      @click.native="deleteProblem(scope.row.id)"></icon-btn>
+                      @click.native="deleteProblem(scope.row.problemId)"></icon-btn>
           </div>
         </el-table-column>
       </el-table>
@@ -102,8 +105,8 @@
                :visible.sync="InlineEditDialogVisible"
                @close-on-click-modal="false">
       <div>
-        <p>DisplayID: {{currentRow._id}}</p>
-        <p>Title: {{currentRow.title}}</p>
+        <p>DisplayID: {{currentRow.problemDisplayId}}</p>
+        <p>Title: {{currentRow.problemTitle}}</p>
       </div>
       <span slot="footer">
         <cancel @click.native="InlineEditDialogVisible = false; getProblemList(currentPage)"></cancel>
@@ -154,6 +157,7 @@
       this.getProblemList(this.currentPage)
     },
     methods: {
+      // 处理双击函数
       handleDblclick (row) {
         row.isEditing = true
       },
@@ -176,14 +180,16 @@
         this.currentPage = page
         this.getProblemList(page)
       },
+      // 获取问题列表（公共+竞赛）
       getProblemList (page = 1) {
         this.loading = true
         let funcName = this.routeName === 'problem-list' ? 'getProblemList' : 'getContestProblemList'
         let params = {
+          paging: true,
           limit: this.pageSize,
           offset: (page - 1) * this.pageSize,
           keyword: this.keyword,
-          contest_id: this.contestId
+          contestId: this.contestId
         }
         api[funcName](params).then(res => {
           this.loading = false

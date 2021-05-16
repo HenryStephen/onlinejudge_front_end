@@ -173,6 +173,7 @@ export default {
       offset,
       limit
     }
+    params.isAdmin = false
     if (searchParams !== undefined) {
       Object.keys(searchParams).forEach((element) => {
         if (searchParams[element]) {
