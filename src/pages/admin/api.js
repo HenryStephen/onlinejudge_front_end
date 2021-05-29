@@ -95,8 +95,9 @@ export default {
       data
     })
   },
+  // 获取所有的编程语言
   getLanguages () {
-    return ajax('languages', 'get')
+    return ajax('/judge/language/admin', 'get')
   },
   // 获取网站基本信息
   getWebsiteConfig () {
@@ -164,44 +165,41 @@ export default {
   getContestAnnouncementList (contestID) {
     return ajax('/content/competition/' + contestID + '/announcement/admin', 'get')
   },
+  // 创建竞赛公告
   createContestAnnouncement (data) {
-    return ajax('admin/contest/announcement', 'post', {
+    return ajax('/content/announcement/admin', 'post', {
       data
     })
   },
   // 删除竞赛公告
   deleteContestAnnouncement (id) {
-    return ajax('admin/contest/announcement', 'delete', {
-      params: {
-        id
-      }
-    })
+    return ajax('/content/announcement/admin/' + id, 'delete')
   },
+  // 修改竞赛公告
   updateContestAnnouncement (data) {
-    return ajax('admin/contest/announcement', 'put', {
+    return ajax('/content/announcement/admin', 'put', {
       data
     })
   },
+  // 获取标签列表
   getProblemTagList (params) {
-    return ajax('problem/tags', 'get', {
+    return ajax('/content/tag', 'get', {
       params
     })
   },
-  compileSPJ (data) {
-    return ajax('admin/compile_spj', 'post', {
-      data
-    })
-  },
+  // 添加题目
   createProblem (data) {
-    return ajax('admin/problem', 'post', {
+    return ajax('/content/problem', 'post', {
       data
     })
   },
+  // 修改题目
   editProblem (data) {
     return ajax('admin/problem', 'put', {
       data
     })
   },
+  // 删除题目
   deleteProblem (id) {
     return ajax('admin/problem', 'delete', {
       params: {
@@ -209,12 +207,9 @@ export default {
       }
     })
   },
+  // 获取题目
   getProblem (id) {
-    return ajax('admin/problem', 'get', {
-      params: {
-        id
-      }
-    })
+    return ajax('/content/problem/' + id, 'get')
   },
   // 获取题目列表
   getProblemList (params) {
@@ -226,10 +221,11 @@ export default {
   // 获取竞赛题目列表
   getContestProblemList (params) {
     params = utils.filterEmptyValue(params)
-    return ajax('admin/contest/problem', 'get', {
+    return ajax('/contest/competition/problem/admin', 'get', {
       params
     })
   },
+  // 获取竞赛题目
   getContestProblem (id) {
     return ajax('admin/contest/problem', 'get', {
       params: {

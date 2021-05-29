@@ -2,7 +2,7 @@
   <div class="view">
     <Panel :title="contestId ? this.$i18n.t('m.Contest_Problem_List') : this.$i18n.t('m.Problem_List')">
       <div slot="header">
-<!--        关键字-->
+<!--        关键字查询-->
         <el-input
           v-model="keyword"
           prefix-icon="el-icon-search"
@@ -44,10 +44,12 @@
             </el-input>
           </template>
         </el-table-column>
+<!--          题目作者-->
         <el-table-column
           prop="problemAuthor"
           label="Author">
         </el-table-column>
+<!--          题目创建时间-->
         <el-table-column
           width="200"
           prop="problemCreateTime"
@@ -56,6 +58,7 @@
             {{scope.row.problemCreateTime | localtime }}
           </template>
         </el-table-column>
+<!--          可见性-->
         <el-table-column
           width="100"
           prop="visible"
@@ -68,29 +71,37 @@
             </el-switch>
           </template>
         </el-table-column>
+<!--          操作-->
         <el-table-column
           fixed="right"
           label="Operation"
           width="250">
           <div slot-scope="scope">
+<!--              编辑-->
             <icon-btn name="Edit" icon="edit" @click.native="goEdit(scope.row.problemId)"></icon-btn>
+<!--              如果处于竞赛中，将竞赛题目公开-->
             <icon-btn v-if="contestId" name="Make Public" icon="clone"
                       @click.native="makeContestProblemPublic(scope.row.problemId)"></icon-btn>
+<!--              下载测试用例-->
             <icon-btn icon="download" name="Download TestCase"
                       @click.native="downloadTestCase(scope.row.problemId)"></icon-btn>
+<!--              删除题目-->
             <icon-btn icon="trash" name="Delete Problem"
                       @click.native="deleteProblem(scope.row.problemId)"></icon-btn>
           </div>
         </el-table-column>
       </el-table>
       <div class="panel-options">
+<!--          创建题目-->
         <el-button type="primary" size="small"
                    @click="goCreateProblem" icon="el-icon-plus">Create
         </el-button>
+<!--          如果处于竞赛中，则从公共题目集中添加题目-->
         <el-button v-if="contestId" type="primary"
                    size="small" icon="el-icon-plus"
                    @click="addProblemDialogVisible = true">Add From Public Problem
         </el-button>
+<!--          分页-->
         <el-pagination
           class="page"
           layout="prev, pager, next"
@@ -100,6 +111,7 @@
         </el-pagination>
       </div>
     </Panel>
+<!--      更新题目展示id和标题时的提示框-->
     <el-dialog title="Sure to update the problem? "
                width="20%"
                :visible.sync="InlineEditDialogVisible"
@@ -109,10 +121,12 @@
         <p>Title: {{currentRow.problemTitle}}</p>
       </div>
       <span slot="footer">
+<!--          如果点击取消按钮-->
         <cancel @click.native="InlineEditDialogVisible = false; getProblemList(currentPage)"></cancel>
         <save @click.native="updateProblem(currentRow)"></save>
       </span>
     </el-dialog>
+<!--      添加竞赛题目-->
     <el-dialog title="Add Contest Problem"
                v-if="contestId"
                width="80%"
@@ -153,7 +167,9 @@
     },
     mounted () {
       this.routeName = this.$route.name
+        // 获取竞赛id
       this.contestId = this.$route.params.contestId
+        // 获取题目列表
       this.getProblemList(this.currentPage)
     },
     methods: {
@@ -161,17 +177,23 @@
       handleDblclick (row) {
         row.isEditing = true
       },
+      // 编辑题目函数
       goEdit (problemId) {
         if (this.routeName === 'problem-list') {
+            // 编辑题目
           this.$router.push({name: 'edit-problem', params: {problemId}})
         } else if (this.routeName === 'contest-problem-list') {
+            // 编辑竞赛题目
           this.$router.push({name: 'edit-contest-problem', params: {problemId: problemId, contestId: this.contestId}})
         }
       },
+        // 创建题目
       goCreateProblem () {
         if (this.routeName === 'problem-list') {
+            // 创建题目
           this.$router.push({name: 'create-problem'})
         } else if (this.routeName === 'contest-problem-list') {
+            // 创建竞赛题目
           this.$router.push({name: 'create-contest-problem', params: {contestId: this.contestId}})
         }
       },
@@ -185,7 +207,6 @@
         this.loading = true
         let funcName = this.routeName === 'problem-list' ? 'getProblemList' : 'getContestProblemList'
         let params = {
-          paging: true,
           limit: this.pageSize,
           offset: (page - 1) * this.pageSize,
           keyword: this.keyword,
@@ -202,6 +223,7 @@
           this.loading = false
         })
       },
+        // 删除题目
       deleteProblem (id) {
         this.$confirm('Sure to delete this problem? The associated submissions will be deleted as well.', 'Delete Problem', {
           type: 'warning'
@@ -214,12 +236,14 @@
         }, () => {
         })
       },
+        // 使竞赛题目变为公共题目
       makeContestProblemPublic (problemID) {
         this.$prompt('Please input display id for the public problem', 'confirm').then(({value}) => {
           api.makeContestProblemPublic({id: problemID, display_id: value}).catch()
         }, () => {
         })
       },
+        // 更新题目
       updateProblem (row) {
         let data = Object.assign({}, row)
         let funcName = ''
@@ -236,14 +260,17 @@
           this.InlineEditDialogVisible = false
         })
       },
+        // 处理行内编辑
       handleInlineEdit (row) {
         this.currentRow = row
         this.InlineEditDialogVisible = true
       },
+        // 下载测试用例
       downloadTestCase (problemID) {
         let url = '/admin/test_case?problem_id=' + problemID
         utils.downloadFile(url)
       },
+        // 获取公共题目
       getPublicProblem () {
         api.getProblemList()
       }
