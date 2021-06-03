@@ -195,7 +195,7 @@ export default {
   },
   // 修改题目
   editProblem (data) {
-    return ajax('admin/problem', 'put', {
+    return ajax('/content/problem', 'put', {
       data
     })
   },
@@ -208,8 +208,8 @@ export default {
     })
   },
   // 获取题目
-  getProblem (id) {
-    return ajax('/content/problem/' + id, 'get')
+  getProblem (competitionId, problemId) {
+    return ajax('/content/problem/' + problemId, 'get')
   },
   // 获取题目列表
   getProblemList (params) {
@@ -226,23 +226,22 @@ export default {
     })
   },
   // 获取竞赛题目
-  getContestProblem (id) {
-    return ajax('admin/contest/problem', 'get', {
-      params: {
-        id
-      }
-    })
+  getContestProblem (competitionId, problemId) {
+    return ajax('/competition/' + competitionId + '/' + problemId + '/admin', 'get')
   },
+  // 创建竞赛题目
   createContestProblem (data) {
-    return ajax('admin/contest/problem', 'post', {
+    return ajax('/content/problem', 'post', {
       data
     })
   },
+  // 更新竞赛题目
   editContestProblem (data) {
-    return ajax('admin/contest/problem', 'put', {
+    return ajax('/content/problem', 'put', {
       data
     })
   },
+  // 删除竞赛题目
   deleteContestProblem (id) {
     return ajax('admin/contest/problem', 'delete', {
       params: {

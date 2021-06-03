@@ -83,8 +83,8 @@
             <icon-btn v-if="contestId" name="Make Public" icon="clone"
                       @click.native="makeContestProblemPublic(scope.row.problemId)"></icon-btn>
 <!--              下载测试用例-->
-            <icon-btn icon="download" name="Download TestCase"
-                      @click.native="downloadTestCase(scope.row.problemId)"></icon-btn>
+<!--            <icon-btn icon="download" name="Download TestCase"-->
+<!--                      @click.native="downloadTestCase(scope.row.problemId)"></icon-btn>-->
 <!--              删除题目-->
             <icon-btn icon="trash" name="Delete Problem"
                       @click.native="deleteProblem(scope.row.problemId)"></icon-btn>
@@ -139,7 +139,6 @@
 
 <script>
   import api from '../../api.js'
-  import utils from '@/utils/utils'
   import AddProblemComponent from './AddPublicProblem.vue'
 
   export default {
@@ -266,10 +265,10 @@
         this.InlineEditDialogVisible = true
       },
         // 下载测试用例
-      downloadTestCase (problemID) {
-        let url = '/admin/test_case?problem_id=' + problemID
-        utils.downloadFile(url)
-      },
+      // downloadTestCase (problemID) {
+      //   let url = '/admin/test_case?problem_id=' + problemID
+      //   utils.downloadFile(url)
+      // },
         // 获取公共题目
       getPublicProblem () {
         api.getProblemList()

@@ -286,7 +286,7 @@
             // 编辑题目
           this.title = this.$i18n.t('m.Edit_Problem')
           let funcName = {'edit-problem': 'getProblem', 'edit-contest-problem': 'getContestProblem'}[this.routeName]
-          api[funcName](this.$route.params.problemId).then(problemRes => {
+          api[funcName](this.$route.params.contestId, this.$route.params.problemId).then(problemRes => {
             let data = problemRes.data.data
             this.problem = data
             this.testCaseUploaded = true
