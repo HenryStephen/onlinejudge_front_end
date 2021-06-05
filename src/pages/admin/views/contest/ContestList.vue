@@ -24,15 +24,18 @@
             <p>Creator: {{props.row.createUserName}}</p>
           </template>
         </el-table-column>
+<!--        竞赛id-->
         <el-table-column
           prop="competitionId"
           width="80"
           label="ID">
         </el-table-column>
+<!--        标题-->
         <el-table-column
           prop="competitionTitle"
           label="Title">
         </el-table-column>
+<!--        赛制-->
         <el-table-column
           label="Rule Type"
           width="130">
@@ -40,6 +43,7 @@
             <el-tag type="gray">{{scope.row.competitionRuleType}}</el-tag>
           </template>
         </el-table-column>
+<!--        类型-->
         <el-table-column
           label="Contest Type"
           width="180">
@@ -49,6 +53,7 @@
             </el-tag>
           </template>
         </el-table-column>
+<!--        状态-->
         <el-table-column
           label="Status"
           width="130">
@@ -59,6 +64,7 @@
             </el-tag>
           </template>
         </el-table-column>
+<!--        可见性-->
         <el-table-column
           width="100"
           label="Visible">
@@ -80,8 +86,8 @@
             <icon-btn name="Announcement" icon="info-circle"
                       @click.native="goContestAnnouncement(scope.row.competitionId)"></icon-btn>
 <!--            下载AC的提交记录-->
-            <icon-btn icon="download" name="Download Accepted Submissions"
-                      @click.native="openDownloadOptions(scope.row.competitionId)"></icon-btn>
+<!--            <icon-btn icon="download" name="Download Accepted Submissions"-->
+<!--                      @click.native="openDownloadOptions(scope.row.competitionId)"></icon-btn>-->
           </div>
         </el-table-column>
       </el-table>
@@ -96,20 +102,19 @@
       </div>
     </Panel>
 <!--    下载AC的提交记录的提示信息-->
-    <el-dialog title="Download Contest Submissions"
-               width="30%"
-               :visible.sync="downloadDialogVisible">
-      <el-switch v-model="excludeAdmin" active-text="Exclude admin submissions"></el-switch>
-      <span slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="downloadSubmissions">确 定</el-button>
-      </span>
-    </el-dialog>
+<!--    <el-dialog title="Download Contest Submissions"-->
+<!--               width="30%"-->
+<!--               :visible.sync="downloadDialogVisible">-->
+<!--      <el-switch v-model="excludeAdmin" active-text="Exclude admin submissions"></el-switch>-->
+<!--      <span slot="footer" class="dialog-footer">-->
+<!--        <el-button type="primary" @click="downloadSubmissions">确 定</el-button>-->
+<!--      </span>-->
+<!--    </el-dialog>-->
   </div>
 </template>
 
 <script>
   import api from '../../api.js'
-  import utils from '@/utils/utils'
   import {CONTEST_STATUS_REVERSE} from '@/utils/constants'
 
   export default {
@@ -155,16 +160,16 @@
         })
       },
       // 打开下载选项
-      openDownloadOptions (contestId) {
-        this.downloadDialogVisible = true
-        this.currentId = contestId
-      },
+      // openDownloadOptions (contestId) {
+      //   this.downloadDialogVisible = true
+      //   this.currentId = contestId
+      // },
       // 下载提交记录
-      downloadSubmissions () {
-        let excludeAdmin = this.excludeAdmin ? '1' : '0'
-        let url = `/admin/download_submissions?contest_id=${this.currentId}&exclude_admin=${excludeAdmin}`
-        utils.downloadFile(url)
-      },
+      // downloadSubmissions () {
+      //   let excludeAdmin = this.excludeAdmin ? '1' : '0'
+      //   let url = `/admin/download_submissions?contest_id=${this.currentId}&exclude_admin=${excludeAdmin}`
+      //   utils.downloadFile(url)
+      // },
       // 修改竞赛信息
       goEdit (contestId) {
         this.$router.push({name: 'edit-contest', params: {contestId}})

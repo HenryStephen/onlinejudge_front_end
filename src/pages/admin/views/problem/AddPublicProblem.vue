@@ -9,16 +9,16 @@
       <el-table-column
         label="ID"
         width="100"
-        prop="id">
+        prop="problemId">
       </el-table-column>
       <el-table-column
         label="DisplayID"
         width="200"
-        prop="_id">
+        prop="problemDisplayId">
       </el-table-column>
       <el-table-column
         label="Title"
-        prop="title">
+        prop="problemTitle">
       </el-table-column>
       <el-table-column
         label="option"
@@ -27,7 +27,7 @@
         fixed="right">
         <template slot-scope="{row}">
           <icon-btn icon="plus" name="Add the problem"
-                    @click.native="handleAddProblem(row.id)"></icon-btn>
+                    @click.native="handleAddProblem(row.problemId)"></icon-btn>
         </template>
       </el-table-column>
     </el-table>
@@ -60,6 +60,7 @@
     },
     mounted () {
       api.getContest(this.contestID).then(res => {
+        console.log(res)
         this.contest = res.data.data
         this.getPublicProblem()
       }).catch(() => {
@@ -72,7 +73,7 @@
           keyword: this.keyword,
           offset: (page - 1) * this.limit,
           limit: this.limit,
-          rule_type: this.contest.rule_type
+          problemRuleType: this.contest.competitionRuleType
         }
         api.getProblemList(params).then(res => {
           this.loading = false
@@ -84,9 +85,9 @@
       handleAddProblem (problemID) {
         this.$prompt('Please input display id for the contest problem', 'confirm').then(({value}) => {
           let data = {
-            problem_id: problemID,
-            contest_id: this.contestID,
-            display_id: value
+            problemId: problemID,
+            competitionId: this.contestID,
+            problemDisplayId: value
           }
           api.addProblemFromPublic(data).then(() => {
             this.$emit('on-change')

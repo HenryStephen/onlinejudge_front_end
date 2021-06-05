@@ -200,12 +200,8 @@ export default {
     })
   },
   // 删除题目
-  deleteProblem (id) {
-    return ajax('admin/problem', 'delete', {
-      params: {
-        id
-      }
-    })
+  deleteProblem (competitionId, problemId) {
+    return ajax('/content/problem/' + problemId, 'delete')
   },
   // 获取题目
   getProblem (competitionId, problemId) {
@@ -227,35 +223,33 @@ export default {
   },
   // 获取竞赛题目
   getContestProblem (competitionId, problemId) {
-    return ajax('/competition/' + competitionId + '/' + problemId + '/admin', 'get')
+    return ajax('/contest/competition/' + competitionId + '/' + problemId + '/admin', 'get')
   },
-  // 创建竞赛题目
+  // 创建竞赛题目（和公共题目公用一套接口）
   createContestProblem (data) {
     return ajax('/content/problem', 'post', {
       data
     })
   },
-  // 更新竞赛题目
+  // 更新竞赛题目（和公共题目公用一套接口）
   editContestProblem (data) {
     return ajax('/content/problem', 'put', {
       data
     })
   },
   // 删除竞赛题目
-  deleteContestProblem (id) {
-    return ajax('admin/contest/problem', 'delete', {
-      params: {
-        id
-      }
-    })
+  deleteContestProblem (competitionId, problemId) {
+    return ajax('/contest/competition/' + competitionId + '/' + problemId + '/admin', 'delete')
   },
+  // 使竞赛题目公开
   makeContestProblemPublic (data) {
-    return ajax('admin/contest_problem/make_public', 'post', {
+    return ajax('/contest/problem/makePublic', 'post', {
       data
     })
   },
+  // 添加公共题目到竞赛题目中
   addProblemFromPublic (data) {
-    return ajax('admin/contest/add_problem_from_public', 'post', {
+    return ajax('/contest/problem/addPublic', 'post', {
       data
     })
   },

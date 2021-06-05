@@ -172,6 +172,7 @@
               <el-upload
                 action="/api/judge/testcase/"
                 name="file"
+                :headers="importHeaders"
                 :data="{spj: problem.isSpj}"
                 :show-file-list="true"
                 :on-success="uploadSucceeded"
@@ -195,6 +196,9 @@
   import Simditor from '../../components/Simditor'
   import Accordion from '../../components/Accordion'
   import api from '../../api'
+  import storage from '@/utils/storage'
+
+  let token = storage.get('token')
 
   export default {
     name: 'Problem',
@@ -230,7 +234,8 @@
           tags: '',
           languages: '',
           testCase: ''
-        }
+        },
+        importHeaders: {Authorization: 'Bearer ' + token}
       }
     },
     mounted () {

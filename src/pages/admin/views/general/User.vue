@@ -4,16 +4,19 @@
       <div slot="header">
         <el-row :gutter="20">
           <el-col :span="8">
+<!--            删除选中的用户-->
             <el-button v-show="selectedUsers.length"
                        type="warning" icon="el-icon-fa-trash"
                        @click="deleteUsers(selectedUserIDs)">Delete
             </el-button>
           </el-col>
+<!--          关键字查询-->
           <el-col :span="selectedUsers.length ? 16: 24">
             <el-input v-model="keyword" prefix-icon="el-icon-search" placeholder="Keywords"></el-input>
           </el-col>
         </el-row>
       </div>
+<!--      用户表格-->
       <el-table
         v-loading="loadingTable"
         element-loading-text="loading"
@@ -22,37 +25,31 @@
         :data="userList"
         style="width: 100%">
         <el-table-column type="selection" width="55"></el-table-column>
-
-        <el-table-column prop="id" label="ID"></el-table-column>
-
-        <el-table-column prop="username" label="Username"></el-table-column>
-
-        <el-table-column prop="create_time" label="Create Time">
+<!--        用户id-->
+        <el-table-column prop="userId" label="ID"></el-table-column>
+<!--        用户名-->
+        <el-table-column prop="userName" label="Username"></el-table-column>
+<!--        用户注册时间-->
+        <el-table-column prop="userRegtime" label="Create Time">
           <template slot-scope="scope">
-            {{scope.row.create_time | localtime }}
+            {{scope.row.userRegtime | localtime }}
           </template>
         </el-table-column>
+<!--        真实姓名-->
+        <el-table-column prop="userRealName" label="Real Name"></el-table-column>
 
-        <el-table-column prop="last_login" label="Last Login">
+        <el-table-column prop="userEmail" label="Email"></el-table-column>
+
+        <el-table-column prop="roleType" label="User Type">
           <template slot-scope="scope">
-            {{scope.row.last_login | localtime }}
-          </template>
-        </el-table-column>
-
-        <el-table-column prop="real_name" label="Real Name"></el-table-column>
-
-        <el-table-column prop="email" label="Email"></el-table-column>
-
-        <el-table-column prop="admin_type" label="User Type">
-          <template slot-scope="scope">
-            {{ scope.row.admin_type }}
+            {{ scope.row.roleType }}
           </template>
         </el-table-column>
 
         <el-table-column fixed="right" label="Option" width="200">
           <template slot-scope="{row}">
-            <icon-btn name="Edit" icon="edit" @click.native="openUserDialog(row.id)"></icon-btn>
-            <icon-btn name="Delete" icon="trash" @click.native="deleteUsers([row.id])"></icon-btn>
+            <icon-btn name="Edit" icon="edit" @click.native="openUserDialog(row.userId)"></icon-btn>
+            <icon-btn name="Delete" icon="trash" @click.native="deleteUsers([row.userId])"></icon-btn>
           </template>
         </el-table-column>
       </el-table>

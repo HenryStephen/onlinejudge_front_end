@@ -213,22 +213,27 @@
         }
         api[funcName](params).then(res => {
           this.loading = false
-          this.total = res.data.data.total
-          for (let problem of res.data.data.results) {
-            problem.isEditing = false
+          if (res.data.data == null) {
+            this.total = 0
+            this.problemList = null
+          } else {
+            this.total = res.data.data.total
+            for (let problem of res.data.data.results) {
+              problem.isEditing = false
+            }
+            this.problemList = res.data.data.results
           }
-          this.problemList = res.data.data.results
         }, res => {
           this.loading = false
         })
       },
         // 删除题目
-      deleteProblem (id) {
+      deleteProblem (problemId) {
         this.$confirm('Sure to delete this problem? The associated submissions will be deleted as well.', 'Delete Problem', {
           type: 'warning'
         }).then(() => {
           let funcName = this.routeName === 'problem-list' ? 'deleteProblem' : 'deleteContestProblem'
-          api[funcName](id).then(() => [
+          api[funcName](this.contestId, problemId).then(() => [
             this.getProblemList(this.currentPage - 1)
           ]).catch(() => {
           })
@@ -238,7 +243,7 @@
         // 使竞赛题目变为公共题目
       makeContestProblemPublic (problemID) {
         this.$prompt('Please input display id for the public problem', 'confirm').then(({value}) => {
-          api.makeContestProblemPublic({id: problemID, display_id: value}).catch()
+          api.makeContestProblemPublic({problemId: problemID, problemDisplayId: value}).catch()
         }, () => {
         })
       },
@@ -247,7 +252,7 @@
         let data = Object.assign({}, row)
         let funcName = ''
         if (this.contestId) {
-          data.contest_id = this.contestId
+          data.contestId = this.contestId
           funcName = 'editContestProblem'
         } else {
           funcName = 'editProblem'
