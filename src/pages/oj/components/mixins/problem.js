@@ -20,7 +20,6 @@ export default {
         if (item.myStatus !== null && item.myStatus !== undefined) {
           return true
         }
-        console.log(true)
       })
       if (!needAdd) {
         return

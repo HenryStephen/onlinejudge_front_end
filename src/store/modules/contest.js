@@ -24,12 +24,12 @@ const state = {
 
 const getters = {
   // contest 是否加载完成
-  contestLoaded: (state) => {
-    return !!state.contest.contestStatus
-  },
+  // contestLoaded: (state) => {
+  //   return !!state.contest.contestStatus
+  // },
   // 判断竞赛状态
   contestStatus: (state, getters) => {
-    if (!getters.contestLoaded) return null
+    // if (!getters.contestLoaded) return null
     let startTime = moment(state.contest.competitionStartTime)
     let endTime = moment(state.contest.competitionEndTime)
     let now = state.now
@@ -68,13 +68,10 @@ const getters = {
   // 问题提交是否禁用
   problemSubmitDisabled: (state, getters, _, rootGetters) => {
     if (getters.contestStatus === CONTEST_STATUS.ENDED) {
-      console.log(111)
       return true
     } else if (getters.contestStatus === CONTEST_STATUS.NOT_START) {
-      console.log(222)
       return !getters.isContestAdmin
     }
-    console.log(333)
     return !rootGetters.isAuthenticated
   },
   // 密码框是否显示

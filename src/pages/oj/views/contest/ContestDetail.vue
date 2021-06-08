@@ -75,12 +75,6 @@
           {{$t('m.Rankings')}}
         </VerticalMenu-item>
 
-<!--        管理员帮助页-->
-        <VerticalMenu-item v-if="showAdminHelper"
-                           :route="{name: 'acm-helper', params: {contestID: contestID}}">
-          <Icon type="ios-paw"></Icon>
-          {{$t('m.Admin_Helper')}}
-        </VerticalMenu-item>
       </VerticalMenu>
     </div>
   </div>
@@ -193,10 +187,6 @@
         if (this.contestStatus) {
           return CONTEST_STATUS_REVERSE[this.contestStatus].color
         }
-      },
-      // 显示admin帮助页
-      showAdminHelper () {
-        return this.isContestAdmin && this.contestRuleType === 'ACM'
       }
     },
     watch: {

@@ -69,11 +69,6 @@
               shape="circle"
               class="tag-btn">{{tag.tagName}}
       </Button>
-<!--      随机选择一个标签里面的题目-->
-      <Button long id="pick-one" @click="pickone">
-        <Icon type="shuffle"></Icon>
-        {{$t('m.Pick_One')}}
-      </Button>
     </Panel>
     <Spin v-if="loadings.tag" fix size="large"></Spin>
     </Col>
@@ -101,7 +96,7 @@
           // 题目id
           {
             title: '#',
-            key: 'problemId',
+            key: 'problemDisplayId',
             width: 80,
             render: (h, params) => {
               return h('Button', {
@@ -117,7 +112,7 @@
                 style: {
                   padding: '2px 0'
                 }
-              }, params.row.problemId)
+              }, params.row.problemDisplayId)
             }
           },
           // 题目标题
@@ -162,13 +157,13 @@
           // 题目提交数量
           {
             title: this.$i18n.t('m.Total'),
-            key: 'problemSubmitNumber'
+            key: 'submitNumber'
           },
           // 题目ac率
           {
             title: this.$i18n.t('m.AC_Rate'),
             render: (h, params) => {
-              return h('span', this.getACRate(params.row.problemSolvedNumber, params.row.problemSubmitNumber))
+              return h('span', this.getACRate(params.row.solvedNumber, params.row.submitNumber))
             }
           }
         ],
@@ -303,13 +298,6 @@
       // 重置题目列表
       onReset () {
         this.$router.push({name: 'problem-list'})
-      },
-      // 随机选择一个标签里面的题目 未实现
-      pickone () {
-        api.pickone().then(res => {
-          this.$success('Good Luck')
-          this.$router.push({name: 'problem-details', params: {problemID: res.data.data}})
-        })
       }
     },
     computed: {

@@ -1,17 +1,9 @@
 import Vue from 'vue'
-import store from '@/store'
 import axios from 'axios'
 import storage from '@/utils/storage'
 
 Vue.prototype.$http = axios
 axios.defaults.baseURL = '/api'
-// axios.defaults.xsrfHeaderName = 'X-CSRFToken'
-// axios.defaults.xsrfCookieName = 'csrftoken'
-
-// var token = storage.get('token') || ''
-// var header = {
-//   'Authorization': 'Bearer ' + token
-// }
 
 export default {
   // 获取网站信息
@@ -318,19 +310,20 @@ function ajax (url, method, options) {
         Vue.prototype.$error(res.data.message)
         reject(res)
         // 若后端返回为登录，则为session失效，应退出当前登录用户
-        if (res.data.data.startsWith('Please login')) {
-          store.dispatch('changeModalStatus', {'mode': 'login', 'visible': true})
-        }
+        // if (res.data.data.startsWith('Please login')) {
+        //   store.dispatch('changeModalStatus', {'mode': 'login', 'visible': true})
+        // }
+      // token过期
+      //   if (res.data.code === 50014) {
+      //     store.dispatch('changeModalStatus', {'mode': 'login', 'visible': true})
+      //   }
       } else {
         resolve(res)
-        // if (method !== 'get') {
-        //   Vue.prototype.$success('Succeeded')
-        // }
       }
     }, res => {
       // API请求异常，一般为Server error 或 network error
       reject(res)
-      Vue.prototype.$error(res.data.data)
+      Vue.prototype.$error(res.data)
     })
   })
 }

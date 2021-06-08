@@ -37,15 +37,15 @@
         </el-table-column>
 <!--        真实姓名-->
         <el-table-column prop="userRealName" label="Real Name"></el-table-column>
-
+<!--        用户邮箱-->
         <el-table-column prop="userEmail" label="Email"></el-table-column>
-
+<!--        角色类型-->
         <el-table-column prop="roleType" label="User Type">
           <template slot-scope="scope">
             {{ scope.row.roleType }}
           </template>
         </el-table-column>
-
+<!--        操作类型-->
         <el-table-column fixed="right" label="Option" width="200">
           <template slot-scope="{row}">
             <icon-btn name="Edit" icon="edit" @click.native="openUserDialog(row.userId)"></icon-btn>
@@ -64,142 +64,48 @@
       </div>
     </Panel>
 
-    <Panel>
-      <span slot="title">{{$t('m.Import_User')}}
-        <el-popover placement="right" trigger="hover">
-          <p>Only support csv file without headers, check the <a
-            href="http://docs.onlinejudge.me/#/onlinejudge/guide/import_users">link</a> for details</p>
-          <i slot="reference" class="el-icon-fa-question-circle import-user-icon"></i>
-        </el-popover>
-      </span>
-      <el-upload v-if="!uploadUsers.length"
-                 action=""
-                 :show-file-list="false"
-                 accept=".csv"
-                 :before-upload="handleUsersCSV">
-        <el-button size="small" icon="el-icon-fa-upload" type="primary">Choose File</el-button>
-      </el-upload>
-      <template v-else>
-        <el-table :data="uploadUsersPage">
-          <el-table-column label="Username">
-            <template slot-scope="{row}">
-              {{row[0]}}
-            </template>
-          </el-table-column>
-          <el-table-column label="Password">
-            <template slot-scope="{row}">
-              {{row[1]}}
-            </template>
-          </el-table-column>
-          <el-table-column label="Email">
-            <template slot-scope="{row}">
-              {{row[2]}}
-            </template>
-          </el-table-column>
-        </el-table>
-        <div class="panel-options">
-          <el-button type="primary" size="small"
-                     icon="el-icon-fa-upload"
-                     @click="handleUsersUpload">Import All
-          </el-button>
-          <el-button type="warning" size="small"
-                     icon="el-icon-fa-undo"
-                     @click="handleResetData">Reset Data
-          </el-button>
-          <el-pagination
-            class="page"
-            layout="prev, pager, next"
-            :page-size="uploadUsersPageSize"
-            :current-page.sync="uploadUsersCurrentPage"
-            :total="uploadUsers.length">
-          </el-pagination>
-        </div>
-      </template>
-    </Panel>
-
-    <Panel :title="$t('m.Generate_User')">
-      <el-form :model="formGenerateUser" ref="formGenerateUser">
-        <el-row type="flex" justify="space-between">
-          <el-col :span="4">
-            <el-form-item label="Prefix" prop="prefix">
-              <el-input v-model="formGenerateUser.prefix" placeholder="Prefix"></el-input>
-            </el-form-item>
-          </el-col>
-          <el-col :span="4">
-            <el-form-item label="Suffix" prop="suffix">
-              <el-input v-model="formGenerateUser.suffix" placeholder="Suffix"></el-input>
-            </el-form-item>
-          </el-col>
-          <el-col :span="4">
-            <el-form-item label="Start Number" prop="number_from" required>
-              <el-input-number v-model="formGenerateUser.number_from" style="width: 100%"></el-input-number>
-            </el-form-item>
-          </el-col>
-          <el-col :span="4">
-            <el-form-item label="End Number" prop="number_to" required>
-              <el-input-number v-model="formGenerateUser.number_to" style="width: 100%"></el-input-number>
-            </el-form-item>
-          </el-col>
-          <el-col :span="4">
-            <el-form-item label="Password Length" prop="password_length" required>
-              <el-input v-model="formGenerateUser.password_length"
-                        placeholder="Password Length"></el-input>
-            </el-form-item>
-          </el-col>
-        </el-row>
-
-        <el-form-item>
-          <el-button type="primary" @click="generateUser" icon="el-icon-fa-users" :loading="loadingGenerate">Generate & Export
-          </el-button>
-          <span class="userPreview" v-if="formGenerateUser.number_from && formGenerateUser.number_to &&
-                                          formGenerateUser.number_from <= formGenerateUser.number_to">
-            The usernames will be {{formGenerateUser.prefix + formGenerateUser.number_from + formGenerateUser.suffix}},
-            <span v-if="formGenerateUser.number_from + 1 < formGenerateUser.number_to">
-              {{formGenerateUser.prefix + (formGenerateUser.number_from + 1) + formGenerateUser.suffix + '...'}}
-            </span>
-            <span v-if="formGenerateUser.number_from + 1 <= formGenerateUser.number_to">
-              {{formGenerateUser.prefix + formGenerateUser.number_to + formGenerateUser.suffix}}
-            </span>
-          </span>
-        </el-form-item>
-      </el-form>
-    </Panel>
     <!--对话框-->
     <el-dialog :title="$t('m.User_Info')" :visible.sync="showUserDialog" :close-on-click-modal="false">
       <el-form :model="user" label-width="120px" label-position="left">
         <el-row :gutter="20">
+<!--          用户名-->
           <el-col :span="12">
             <el-form-item :label="$t('m.User_Username')" required>
-              <el-input v-model="user.username"></el-input>
+              <el-input v-model="user.userName"></el-input>
             </el-form-item>
           </el-col>
+<!--          用户真实姓名-->
           <el-col :span="12">
             <el-form-item :label="$t('m.User_Real_Name')" required>
-              <el-input v-model="user.real_name"></el-input>
+              <el-input v-model="user.userRealName"></el-input>
             </el-form-item>
           </el-col>
+<!--          用户邮箱-->
           <el-col :span="12">
             <el-form-item :label="$t('m.User_Email')" required>
-              <el-input v-model="user.email"></el-input>
+              <el-input v-model="user.userEmail"></el-input>
             </el-form-item>
           </el-col>
+<!--          用户密码-->
           <el-col :span="12">
             <el-form-item :label="$t('m.User_New_Password')">
-              <el-input v-model="user.password"></el-input>
+              <el-input v-model="user.userPassword"></el-input>
             </el-form-item>
           </el-col>
+<!--          用户角色类型-->
           <el-col :span="12">
             <el-form-item :label="$t('m.User_Type')">
-              <el-select v-model="user.admin_type">
+              <el-select v-model="user.roleType">
                 <el-option label="Regular User" value="Regular User"></el-option>
                 <el-option label="Admin" value="Admin"></el-option>
                 <el-option label="Super Admin" value="Super Admin"></el-option>
               </el-select>
             </el-form-item>
           </el-col>
+<!--          用户问题权限-->
           <el-col :span="12">
             <el-form-item :label="$t('m.Problem_Permission')">
-              <el-select v-model="user.problem_permission" :disabled="user.admin_type!=='Admin'">
+              <el-select v-model="user.problem_permission" disabled>
                 <el-option label="None" value="None"></el-option>
                 <el-option label="Own" value="Own"></el-option>
                 <el-option label="All" value="All"></el-option>
@@ -207,28 +113,9 @@
             </el-form-item>
           </el-col>
           <el-col :span="8">
-            <el-form-item :label="$t('m.Two_Factor_Auth')">
-              <el-switch
-                v-model="user.two_factor_auth"
-                :disabled="!user.real_tfa"
-                active-color="#13ce66"
-                inactive-color="#ff4949">
-              </el-switch>
-            </el-form-item>
-          </el-col>
-          <el-col :span="8">
-            <el-form-item label="Open Api">
-              <el-switch
-                v-model="user.open_api"
-                active-color="#13ce66"
-                inactive-color="#ff4949">
-              </el-switch>
-            </el-form-item>
-          </el-col>
-          <el-col :span="8">
             <el-form-item :label="$t('m.Is_Disabled')">
               <el-switch
-                v-model="user.is_disabled">
+                v-model="user.isDisable">
               </el-switch>
             </el-form-item>
           </el-col>
@@ -243,9 +130,7 @@
 </template>
 
 <script>
-  import papa from 'papaparse'
   import api from '../../api.js'
-  import utils from '@/utils/utils'
 
   export default {
     name: 'User',
@@ -257,10 +142,6 @@
         total: 0,
         // 用户列表
         userList: [],
-        uploadUsers: [],
-        uploadUsersPage: [],
-        uploadUsersCurrentPage: 1,
-        uploadUsersPageSize: 15,
         // 搜索关键字
         keyword: '',
         // 是否显示用户对话框
@@ -268,20 +149,13 @@
         // 当前用户model
         user: {},
         loadingTable: false,
-        loadingGenerate: false,
         // 当前页码
         currentPage: 0,
-        selectedUsers: [],
-        formGenerateUser: {
-          prefix: '',
-          suffix: '',
-          number_from: 0,
-          number_to: 0,
-          password_length: 8
-        }
+        selectedUsers: []
       }
     },
     mounted () {
+      // 获取用户列表
       this.getUserList(1)
     },
     methods: {
@@ -292,6 +166,7 @@
       },
       // 提交修改用户的信息
       saveUser () {
+        // 更新用户
         api.editUser(this.user).then(res => {
           // 更新列表
           this.getUserList(this.currentPage)
@@ -305,14 +180,13 @@
         this.showUserDialog = true
         api.getUser(id).then(res => {
           this.user = res.data.data
-          this.user.password = ''
-          this.user.real_tfa = this.user.two_factor_auth
+          this.user.userPassword = ''
         })
       },
       // 获取用户列表
       getUserList (page) {
         this.loadingTable = true
-        api.getUserList((page - 1) * this.pageSize, this.pageSize, this.keyword).then(res => {
+        api.getUserList(page, this.pageSize, this.keyword).then(res => {
           this.loadingTable = false
           this.total = res.data.data.total
           this.userList = res.data.data.results
@@ -334,55 +208,6 @@
       },
       handleSelectionChange (val) {
         this.selectedUsers = val
-      },
-      generateUser () {
-        this.$refs['formGenerateUser'].validate((valid) => {
-          if (!valid) {
-            this.$error('Please validate the error fields')
-            return
-          }
-          this.loadingGenerate = true
-          let data = Object.assign({}, this.formGenerateUser)
-          api.generateUser(data).then(res => {
-            this.loadingGenerate = false
-            let url = '/admin/generate_user?file_id=' + res.data.data.file_id
-            utils.downloadFile(url).then(() => {
-              this.$alert('All users created successfully, the users sheets have downloaded to your disk.', 'Notice')
-            })
-            this.getUserList(1)
-          }).catch(() => {
-            this.loadingGenerate = false
-          })
-        })
-      },
-      handleUsersCSV (file) {
-        papa.parse(file, {
-          complete: (results) => {
-            let data = results.data.filter(user => {
-              return user[0] && user[1] && user[2]
-            })
-            let delta = results.data.length - data.length
-            if (delta > 0) {
-              this.$warning(delta + ' users have been filtered due to empty value')
-            }
-            this.uploadUsersCurrentPage = 1
-            this.uploadUsers = data
-            this.uploadUsersPage = data.slice(0, this.uploadUsersPageSize)
-          },
-          error: (error) => {
-            this.$error(error)
-          }
-        })
-      },
-      handleUsersUpload () {
-        api.importUsers(this.uploadUsers).then(res => {
-          this.getUserList(1)
-          this.handleResetData()
-        }).catch(() => {
-        })
-      },
-      handleResetData () {
-        this.uploadUsers = []
       }
     },
     computed: {
@@ -398,15 +223,14 @@
       'keyword' () {
         this.currentChange(1)
       },
-      'user.admin_type' () {
-        if (this.user.admin_type === 'Super Admin') {
+      'user.roleType' () {
+        if (this.user.roleType === 'Super Admin') {
           this.user.problem_permission = 'All'
-        } else if (this.user.admin_type === 'Regular User') {
+        } else if (this.user.roleType === 'Regular User') {
           this.user.problem_permission = 'None'
+        } else if (this.user.roleType === 'Admin') {
+          this.user.problem_permission = 'Own'
         }
-      },
-      'uploadUsersCurrentPage' (page) {
-        this.uploadUsersPage = this.uploadUsers.slice((page - 1) * this.uploadUsersPageSize, page * this.uploadUsersPageSize)
       }
     }
   }

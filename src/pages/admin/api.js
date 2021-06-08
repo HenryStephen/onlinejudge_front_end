@@ -53,46 +53,31 @@ export default {
     })
   },
   // 获取用户列表
-  getUserList (offset, limit, keyword) {
-    let params = {paging: true, offset, limit}
+  getUserList (page, limit, keyword) {
+    let params = {page, limit}
     if (keyword) {
       params.keyword = keyword
     }
-    return ajax('admin/user', 'get', {
+    return ajax('/userInfo/user', 'get', {
       params: params
     })
   },
   // 获取单个用户信息
   getUser (id) {
-    return ajax('admin/user', 'get', {
-      params: {
-        id
-      }
-    })
+    return ajax('/userInfo/user/' + id, 'get')
   },
   // 编辑用户
   editUser (data) {
-    return ajax('admin/user', 'put', {
+    return ajax('/userInfo/user', 'put', {
       data
     })
   },
+  // 删除用户
   deleteUsers (id) {
-    return ajax('admin/user', 'delete', {
+    return ajax('/userInfo/user', 'delete', {
       params: {
         id
       }
-    })
-  },
-  importUsers (users) {
-    return ajax('admin/user', 'post', {
-      data: {
-        users
-      }
-    })
-  },
-  generateUser (data) {
-    return ajax('admin/generate_user', 'post', {
-      data
     })
   },
   // 获取所有的编程语言
@@ -109,9 +94,11 @@ export default {
       data
     })
   },
+  // 未使用
   getJudgeServer () {
     return ajax('admin/judge_server', 'get')
   },
+  // 未使用
   deleteJudgeServer (hostname) {
     return ajax('admin/judge_server', 'delete', {
       params: {
@@ -119,14 +106,17 @@ export default {
       }
     })
   },
+  // 未使用
   updateJudgeServer (data) {
     return ajax('admin/judge_server', 'put', {
       data
     })
   },
+  // 未使用
   getInvalidTestCaseList () {
     return ajax('admin/prune_test_case', 'get')
   },
+  // 未使用
   pruneTestCase (id) {
     return ajax('admin/prune_test_case', 'delete', {
       params: {
@@ -210,7 +200,7 @@ export default {
   // 获取题目列表
   getProblemList (params) {
     params = utils.filterEmptyValue(params)
-    return ajax('/content/problem', 'get', {
+    return ajax('/content/problem/admin', 'get', {
       params
     })
   },
@@ -253,19 +243,9 @@ export default {
       data
     })
   },
-  getReleaseNotes () {
-    return ajax('admin/versions', 'get')
-  },
+  // 获取仪表盘信息
   getDashboardInfo () {
     return ajax('admin/dashboard_info', 'get')
-  },
-  getSessions () {
-    return ajax('sessions', 'get')
-  },
-  exportProblems (data) {
-    return ajax('export_problem', 'post', {
-      data
-    })
   }
 }
 
@@ -294,13 +274,18 @@ function ajax (url, method, options) {
       data
     }).then(res => {
       if (res.data.code !== 20000) {
+        // 代表操作不正常
         Vue.prototype.$error(res.data.message)
         reject(res)
         // 若后端返回为登录，则为session失效，应退出当前登录用户
-        if (res.data.data.startsWith('Please login')) {
+        // if (res.data.data.startsWith('Please login')) {
+        //   router.push({name: 'login'})
+        // }
+        if (res.data.code === 100101) {
           router.push({name: 'login'})
         }
       } else {
+        // 代表操作正常
         resolve(res)
         if (method !== 'get') {
           Vue.prototype.$success('Succeeded')
@@ -309,7 +294,7 @@ function ajax (url, method, options) {
     }, res => {
       // API请求异常，一般为Server error 或 network error
       reject(res)
-      Vue.prototype.$error(res.data.data)
+      Vue.prototype.$error(res.data)
     })
   })
 }

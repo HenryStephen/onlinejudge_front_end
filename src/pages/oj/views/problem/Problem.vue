@@ -432,7 +432,7 @@
         // 正在提交
         this.submitting = true
         let data = {
-          problem_id: this.problem.problemId,
+          problem_id: this.problem.problemDisplayId,
           language: this.language,
           code: this.code,
           contest_id: this.contestID
