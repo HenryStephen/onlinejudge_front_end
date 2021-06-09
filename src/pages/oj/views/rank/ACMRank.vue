@@ -3,11 +3,14 @@
     <Col :span="22">
     <Panel :padding="10">
       <div slot="title">{{$t('m.ACM_Ranklist')}}</div>
+<!--      echart-->
       <div class="echarts">
         <ECharts :options="options" ref="chart" auto-resize></ECharts>
       </div>
     </Panel>
+<!--      表格-->
     <Table :data="dataRank" :columns="columns" :loading="loadingTable" size="large"></Table>
+<!--      分页-->
     <Pagination :total="total" :page-size.sync="limit" :current.sync="page"
                 @on-change="getRankData" show-sizer
                 @on-page-size-change="getRankData(1)"></Pagination>
@@ -34,6 +37,7 @@
         loadingTable: false,
         dataRank: [],
         columns: [
+          // 展示排名
           {
             align: 'center',
             width: 60,
@@ -41,6 +45,7 @@
               return h('span', {}, params.index + (this.page - 1) * this.limit + 1)
             }
           },
+          // 展示用户
           {
             title: this.$i18n.t('m.User_User'),
             align: 'center',
@@ -55,33 +60,34 @@
                     this.$router.push(
                       {
                         name: 'user-home',
-                        query: {username: params.row.user.username}
+                        query: {username: params.row.userName}
                       })
                   }
                 }
-              }, params.row.user.username)
+              }, params.row.userName)
             }
           },
+          // 展示格言
           {
             title: this.$i18n.t('m.mood'),
             align: 'center',
-            key: 'mood'
+            key: 'userMood'
           },
           {
             title: this.$i18n.t('m.AC'),
             align: 'center',
-            key: 'accepted_number'
+            key: 'userSolveNumber'
           },
           {
             title: this.$i18n.t('m.Total'),
             align: 'center',
-            key: 'submission_number'
+            key: 'userSubmissionNumber'
           },
           {
             title: this.$i18n.t('m.Rating'),
             align: 'center',
             render: (h, params) => {
-              return h('span', utils.getACRate(params.row.accepted_number, params.row.submission_number))
+              return h('span', utils.getACRate(params.row.userSolveNumber, params.row.userSubmissionNumber))
             }
           }
         ],
@@ -100,7 +106,7 @@
             show: true,
             feature: {
               dataView: {show: true, readOnly: true},
-              magicType: {show: true, type: ['line', 'bar', 'stack']},
+              magicType: {show: true, type: ['line', 'bar']},
               saveAsImage: {show: true}
             },
             right: '10%'
@@ -156,11 +162,10 @@
     },
     methods: {
       getRankData (page) {
-        let offset = (page - 1) * this.limit
         let bar = this.$refs.chart
         bar.showLoading({maskColor: 'rgba(250, 250, 250, 0.8)'})
         this.loadingTable = true
-        api.getUserRank(offset, this.limit, RULE_TYPE.ACM).then(res => {
+        api.getUserRank(page, this.limit, RULE_TYPE.ACM).then(res => {
           this.loadingTable = false
           if (page === 1) {
             this.changeCharts(res.data.data.results.slice(0, 10))
@@ -176,9 +181,9 @@
       changeCharts (rankData) {
         let [usernames, acData, totalData] = [[], [], []]
         rankData.forEach(ele => {
-          usernames.push(ele.user.username)
-          acData.push(ele.accepted_number)
-          totalData.push(ele.submission_number)
+          usernames.push(ele.userName)
+          acData.push(ele.userSolveNumber)
+          totalData.push(ele.userSubmissionNumber)
         })
         this.options.xAxis[0].data = usernames
         this.options.series[0].data = acData

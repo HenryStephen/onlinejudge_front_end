@@ -119,6 +119,7 @@
       // 获取问题列表
       getProblems (page = 1) {
         let params = {
+          page: page,
           keyword: this.keyword,
           offset: (page - 1) * this.limit,
           limit: this.limit

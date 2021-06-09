@@ -28,22 +28,22 @@
         <Menu-item name="/acm-rank">
           {{$t('m.ACM_Rank')}}
         </Menu-item>
-        <Menu-item name="/oi-rank">
-          {{$t('m.OI_Rank')}}
-        </Menu-item>
+<!--        <Menu-item name="/oi-rank">-->
+<!--          {{$t('m.OI_Rank')}}-->
+<!--        </Menu-item>-->
       </Submenu>
-      <Submenu name="about">
-        <template slot="title">
-          <Icon type="information-circled"></Icon>
-          {{$t('m.About')}}
-        </template>
-        <Menu-item name="/about">
-          {{$t('m.Judger')}}
-        </Menu-item>
-        <Menu-item name="/FAQ">
-          {{$t('m.FAQ')}}
-        </Menu-item>
-      </Submenu>
+<!--      <Submenu name="about">-->
+<!--        <template slot="title">-->
+<!--          <Icon type="information-circled"></Icon>-->
+<!--          {{$t('m.About')}}-->
+<!--        </template>-->
+<!--        <Menu-item name="/about">-->
+<!--          {{$t('m.Judger')}}-->
+<!--        </Menu-item>-->
+<!--        <Menu-item name="/FAQ">-->
+<!--          {{$t('m.FAQ')}}-->
+<!--        </Menu-item>-->
+<!--      </Submenu>-->
 <!--      未登录-->
       <template v-if="!isAuthenticated">
         <div class="btn-menu">

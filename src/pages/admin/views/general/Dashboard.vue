@@ -35,11 +35,11 @@
     <el-col :md="14" :lg="16" v-if="isSuperAdmin">
       <div class="info-container">
         <info-card color="#909399" icon="el-icon-fa-users" message="Total Users" iconSize="30px" class="info-item"
-                   :value="infoData.user_count"></info-card>
-        <info-card color="#67C23A" icon="el-icon-fa-list" message="Today Submissions" class="info-item"
-                   :value="infoData.today_submission_count"></info-card>
+                   :value="infoData.userCount"></info-card>
+        <info-card color="#67C23A" icon="el-icon-fa-list" message="Total Submissions" class="info-item"
+                   :value="infoData.totalSubmissionCount"></info-card>
         <info-card color="#409EFF" icon="el-icon-fa-trophy" message="Recent Contests" class="info-item"
-                   :value="infoData.recent_contest_count"></info-card>
+                   :value="infoData.recentContestCount"></info-card>
       </div>
     </el-col>
   </el-row>
@@ -60,9 +60,9 @@
     data () {
       return {
         infoData: {
-          user_count: 0,
-          recent_contest_count: 0,
-          today_submission_count: 0
+          userCount: 0,
+          recentContestCount: 0,
+          totalSubmissionCount: 0
         },
         session: {}
       }

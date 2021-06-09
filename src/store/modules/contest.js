@@ -24,12 +24,12 @@ const state = {
 
 const getters = {
   // contest 是否加载完成
-  // contestLoaded: (state) => {
-  //   return !!state.contest.contestStatus
-  // },
+  contestLoaded: (state) => {
+    return !!state.contest.competitionStatus
+  },
   // 判断竞赛状态
   contestStatus: (state, getters) => {
-    // if (!getters.contestLoaded) return null
+    if (!getters.contestLoaded) return null
     let startTime = moment(state.contest.competitionStartTime)
     let endTime = moment(state.contest.competitionEndTime)
     let now = state.now

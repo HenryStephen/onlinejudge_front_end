@@ -106,7 +106,7 @@
                 },
                 on: {
                   click: () => {
-                    this.$router.push({name: 'problem-details', params: {problemID: params.row.problemId}})
+                    this.$router.push({name: 'problem-details', params: {problemID: params.row.problemDisplayId}})
                   }
                 },
                 style: {
@@ -127,7 +127,7 @@
                 },
                 on: {
                   click: () => {
-                    this.$router.push({name: 'problem-details', params: {problemID: params.row.problemId}})
+                    this.$router.push({name: 'problem-details', params: {problemID: params.row.problemDisplayId}})
                   }
                 },
                 style: {

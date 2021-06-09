@@ -152,7 +152,7 @@
         <ul>
 <!--          题目id-->
           <li><p>ID</p>
-            <p>{{problem.problemId}}</p>
+            <p>{{problem.problemDisplayId}}</p>
           </li>
 <!--          题目时间限制-->
           <li>
@@ -312,10 +312,6 @@
           // 设置problem
           let problem = res.data.data
           this.changeDomTitle({title: problem.problemTitle})
-          // 如果之前提交过，则设置为true
-          // api.submissionExists(problem.id).then(res => {
-          //   this.submissionExists = res.data.data
-          // })
           // 设置题目语言
           problem.languages = problem.languages.sort()
           this.problem = problem
@@ -341,9 +337,9 @@
           }
         }
         // 设置 acnumber
-        let acNum = problemData.problemSolvedNumber
+        let acNum = problemData.solvedNumber
         let data = [
-          {name: 'WA', value: problemData.problemSubmitNumber - acNum},
+          {name: 'WA', value: problemData.submitNumber - acNum},
           {name: 'AC', value: acNum}
         ]
         // 设置饼状图的数据信息

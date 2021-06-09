@@ -78,7 +78,7 @@
           width="250">
           <div slot-scope="scope">
 <!--              编辑-->
-            <icon-btn name="Edit" icon="edit" @click.native="goEdit(scope.row.problemId)"></icon-btn>
+            <icon-btn name="Edit" icon="edit" @click.native="goEdit(scope.row.problemDisplayId)"></icon-btn>
 <!--              如果处于竞赛中，将竞赛题目公开-->
             <icon-btn v-if="contestId" name="Make Public" icon="clone"
                       @click.native="makeContestProblemPublic(scope.row.problemId)"></icon-btn>
@@ -206,6 +206,7 @@
         this.loading = true
         let funcName = this.routeName === 'problem-list' ? 'getProblemList' : 'getContestProblemList'
         let params = {
+          page: page,
           limit: this.pageSize,
           offset: (page - 1) * this.pageSize,
           keyword: this.keyword,

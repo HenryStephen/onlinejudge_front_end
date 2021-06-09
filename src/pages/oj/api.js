@@ -29,7 +29,7 @@ export default {
     })
   },
   checkUsernameOrEmail (username, email) {
-    return ajax('check_username_or_email', 'post', {
+    return ajax('/user/checkUsernameOrEmail', 'post', {
       data: {
         username,
         email
@@ -38,7 +38,7 @@ export default {
   },
   // 注册
   register (data) {
-    return ajax('register', 'post', {
+    return ajax('/user/register', 'post', {
       data
     })
   },
@@ -156,7 +156,7 @@ export default {
     return ajax('pickone', 'get')
   },
   // 根据题目id获取题目信息
-  getProblem (problemID) {
+  getProblem (problemID) { // 代表展示id
     return ajax('/content/problem/' + problemID, 'get')
   },
   // 获取竞赛列表
@@ -206,7 +206,7 @@ export default {
     return ajax('/contest/competition/' + contestId + '/problem', 'get')
   },
   // 获取具体竞赛题目
-  getContestProblem (problemID, contestID) {
+  getContestProblem (problemID, contestID) {  // 代表展示id
     return ajax('/contest/competition/' + contestID + '/problem/' + problemID, 'get')
   },
   // 提交代码
@@ -254,13 +254,13 @@ export default {
       data
     })
   },
-  getUserRank (offset, limit, rule = 'acm') {
+  getUserRank (pageNum, limit, rule = 'ACM') {
     let params = {
-      offset,
+      pageNum,
       limit,
       rule
     }
-    return ajax('user_rank', 'get', {
+    return ajax('/statistic/userRank', 'get', {
       params
     })
   },

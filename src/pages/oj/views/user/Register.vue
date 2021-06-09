@@ -21,20 +21,6 @@
         <Icon type="ios-locked-outline" slot="prepend"></Icon>
         </Input>
       </FormItem>
-      <FormItem prop="captcha" style="margin-bottom:10px">
-        <div class="oj-captcha">
-          <div class="oj-captcha-code">
-            <Input v-model="formRegister.captcha" :placeholder="$t('m.Captcha')" size="large" @on-enter="handleRegister">
-            <Icon type="ios-lightbulb-outline" slot="prepend"></Icon>
-            </Input>
-          </div>
-          <div class="oj-captcha-img">
-            <Tooltip content="Click to refresh" placement="top">
-              <img :src="captchaSrc" @click="getCaptchaSrc"/>
-            </Tooltip>
-          </div>
-        </div>
-      </FormItem>
     </Form>
     <div class="footer">
       <Button
@@ -61,13 +47,10 @@
 
   export default {
     mixins: [FormMixin],
-    mounted () {
-      this.getCaptchaSrc()
-    },
     data () {
       const CheckUsernameNotExist = (rule, value, callback) => {
         api.checkUsernameOrEmail(value, undefined).then(res => {
-          if (res.data.data.username === true) {
+          if (res.data.data === true) {
             callback(new Error(this.$i18n.t('m.The_username_already_exists')))
           } else {
             callback()
@@ -76,7 +59,7 @@
       }
       const CheckEmailNotExist = (rule, value, callback) => {
         api.checkUsernameOrEmail(undefined, value).then(res => {
-          if (res.data.data.email === true) {
+          if (res.data.data === true) {
             callback(new Error(this.$i18n.t('m.The_email_already_exists')))
           } else {
             callback()
@@ -104,8 +87,7 @@
           username: '',
           password: '',
           passwordAgain: '',
-          email: '',
-          captcha: ''
+          email: ''
         },
         ruleRegister: {
           username: [
@@ -122,9 +104,6 @@
           ],
           passwordAgain: [
             {required: true, validator: CheckAgainPassword, trigger: 'change'}
-          ],
-          captcha: [
-            {required: true, trigger: 'blur', min: 1, max: 10}
           ]
         }
       }
@@ -147,8 +126,6 @@
             this.switchMode('login')
             this.btnRegisterLoading = false
           }, _ => {
-            this.getCaptchaSrc()
-            this.formRegister.captcha = ''
             this.btnRegisterLoading = false
           })
         })

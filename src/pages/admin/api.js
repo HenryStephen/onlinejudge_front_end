@@ -245,7 +245,7 @@ export default {
   },
   // 获取仪表盘信息
   getDashboardInfo () {
-    return ajax('admin/dashboard_info', 'get')
+    return ajax('/statistic/dashboardInfo', 'get')
   }
 }
 

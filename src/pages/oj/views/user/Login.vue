@@ -13,12 +13,6 @@
         <Icon type="ios-locked-outline" slot="prepend"></Icon>
         </Input>
       </FormItem>
-<!--      验证码 需要则进行展示-->
-      <FormItem prop="tfa_code" v-if="tfaRequired">
-        <Input v-model="formLogin.tfa_code" :placeholder="$t('m.TFA_Code')">
-        <Icon type="ios-lightbulb-outline" slot="prepend"></Icon>
-        </Input>
-      </FormItem>
     </Form>
     <div class="footer">
 <!--      登录按钮-->
@@ -32,7 +26,7 @@
 <!--      注册-->
       <a v-if="website.allowRegistry" @click.stop="handleBtnClick('register')">{{$t('m.No_Account')}}</a>
 <!--      忘记密码-->
-      <a @click.stop="goResetPassword" style="float: right">{{$t('m.Forget_Password')}}</a>
+<!--      <a @click.stop="goResetPassword" style="float: right">{{$t('m.Forget_Password')}}</a>-->
     </div>
   </div>
 </template>
@@ -45,29 +39,16 @@
   export default {
     mixins: [FormMixin],
     data () {
-      // 判断是否需要验证码的验证器
-      const CheckRequiredTFA = (rule, value, callback) => {
-        if (value !== '') {
-          api.tfaRequiredCheck(value).then(res => {
-            this.tfaRequired = res.data.data.result
-          })
-        }
-        callback()
-      }
-
       return {
-        tfaRequired: false, // 默认不需要验证码
         btnLoginLoading: false,
         formLogin: {
           username: '',
-          password: '',
-          tfa_code: ''
+          password: ''
         },
         // 用户名和密码的填写规则
         ruleLogin: {
           username: [
-            {required: true, trigger: 'blur'},
-            {validator: CheckRequiredTFA, trigger: 'blur'}
+            {required: true, trigger: 'blur'}
           ],
           password: [
             {required: true, trigger: 'change', min: 6, max: 20}
@@ -89,10 +70,6 @@
         this.validateForm('formLogin').then(valid => {
           this.btnLoginLoading = true
           let formData = Object.assign({}, this.formLogin)
-          // 如果不需要验证码，则删除该参数
-          if (!this.tfaRequired) {
-            delete formData['tfa_code']
-          }
           api.login(formData).then(res => {
             this.btnLoginLoading = false
             this.changeModalStatus({visible: false})
@@ -105,14 +82,14 @@
             this.btnLoginLoading = false
           })
         })
-      },
-      // 忘记密码
-      goResetPassword () {
-        // 模态框消失
-        this.changeModalStatus({visible: false})
-        // 跳转到重置密码页面
-        this.$router.push({name: 'apply-reset-password'})
       }
+      // 忘记密码
+      // goResetPassword () {
+      //   // 模态框消失
+      //   this.changeModalStatus({visible: false})
+      //   // 跳转到重置密码页面
+      //   this.$router.push({name: 'apply-reset-password'})
+      // }
     },
     computed: {
       ...mapGetters(['website', 'modalStatus']),
